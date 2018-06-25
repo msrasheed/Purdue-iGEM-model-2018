@@ -1,2 +1,5 @@
-proj = sbioloadproject('splitEnzymeKinetics1.sbproj');
-proj = proj.m1;
+function test2(data)
+x = data;
+[lamda,psi,T,stats,F] = factoran(x, 2);
+biplot(lamda);
+end
