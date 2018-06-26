@@ -1,5 +1,5 @@
 function [data, time] = simulateKinetics(paramArray)
-    m1 = sbioloadproject('splitEnzymeKinetics1.sbproj');
+    sbioloadproject('splitEnzymeKinetics1.sbproj');
     numReacts = m1.reactions.length;
     index = 1;
     for react = 1:numReacts
@@ -12,7 +12,7 @@ function [data, time] = simulateKinetics(paramArray)
         end
     end
     sim = sbiosimulate(m1);
-    blueCompInd = sim.DataNames == "blueComp";
+    blueCompInd = find(sim.DataNames == "blueComp");
     data = sim.Data(:,blueCompInd);
     time = sim.Time;
 end
