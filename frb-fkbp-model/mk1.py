@@ -24,13 +24,14 @@ def main():
 
 	ndim = 5
 	nwalkers = 50
-	burnRuns = 100
-	runs = 500
-	p0 = np.random.rand(ndim * nwalkers).reshape((nwalkers, ndim))	
+	burnRuns = 1000
+	runs = 10000
+	p0 = np.random.rand(ndim * nwalkers).reshape((nwalkers, ndim))
+	#p0 = [testParams] * nwalkers
 
-	bar = progressbar.ProgressBar(max_value=ndim*burnRuns*nwalkers)
+	bar = progressbar.ProgressBar(max_value=burnRuns*nwalkers+100)
 
-	sampler = emcee.EnsembleSampler(nwalkers, ndim, postProb, args=[eng, m1, bar])
+	sampler = emcee.EnsembleSampler(nwalkers, ndim, postProb, args=[eng, m1, bar], a=2e-15)
 
 	pos, prob, state = sampler.run_mcmc(p0, burnRuns)
 	print "\nCompleted Burn Run"
@@ -70,15 +71,11 @@ def likelihood(x, eng, m1):
 	passed = True;
 	blue = [[1]]
 	time = [[1]]
-	global numTrials
-	global numFails
 	try:
-		blue, time = eng.frbFkbpSimulator(x.tolist(), m1["m1"], nargout=2)
+		blue, time = eng.frbFkbpSimulator(matlab.double(x.tolist()), m1["m1"], nargout=2)
 	except Exception as msg:
 		passed = False
-		numFails += 1
-		print str(numFails) + "/" + str(numTrials)
-		print x
+		print "Simulation Failed"
 
 	blue = blue[0]
 	time = time[0]
@@ -89,7 +86,7 @@ def likelihood(x, eng, m1):
 		SSE += (blueCheck[i] - blue[i])**2
 
 	if passed:
-		return errorGaussian(SSE)
+		return np.log(errorGaussian(SSE))
 	else:
 		return -np.inf
 
@@ -102,7 +99,7 @@ def prior(x):
 	
 def errorGaussian(err):
 	mean = 0
-	std = .4
+	std = .01
 	retval = (1/(2*math.pi*std**2))*math.exp(-1*((err-mean)**2)/(2*std**2))
 	return retval
 

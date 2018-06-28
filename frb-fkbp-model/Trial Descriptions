@@ -1,0 +1,31 @@
+Trial Descriptions
+
+Trial 1 
+	- made sure all params between 0 and 2 (prior)
+	- accelerated matlab model for faster simulation
+	Results
+	-not good
+		- distribution for parameters everywhere
+
+Trial 2
+	- made initial parameter values for all walkers start at true values
+	Results
+	- walkers didn't vary much. 
+	- parameter distributions were centered on actual values
+
+Trial 3 
+	- walkers all start initially at real values
+	- changed posterior probability function to be the natural log of the probability
+	Results
+	- walkers didn't vary still
+	-stayed on initial values
+
+Trial 4
+	- saved this trial after many other runs
+	- changed proposal scale parameter to 2e-15 and number of runs to 10,000
+	Results
+	- simulations run faster when proposal scale is smaller, i don't know why (probably because parameter values aren't changing, see next points)
+	- walkers don't change their values at all. Stick with what ever random value they were assigned to initially
+	Solutions?
+	-UMMMMM, idk. Prob do some research on proper prior distributions
+

@@ -1,5 +1,5 @@
 function [data, time] = frbFkbpSimulator(paramArray, m1)
-paramArray = cell2mat(paramArray);
+%paramArray = cell2mat(paramArray);
 %sbioloadproject('frb-fkbp-hrp-model.sbproj');
 numReacts = m1.reactions.length - 1;
 index = 1;
