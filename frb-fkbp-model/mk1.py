@@ -15,6 +15,8 @@ def main():
 	import corner
 	import progressbar 
 
+	print "Initializing..."
+
 	eng = matlab.engine.start_matlab()
 	print "Matlab Engine Started"
 
@@ -24,14 +26,16 @@ def main():
 
 	ndim = 5
 	nwalkers = 50
-	burnRuns = 1000
-	runs = 10000
+	burnRuns = 100
+	runs = 1000
 	p0 = np.random.rand(ndim * nwalkers).reshape((nwalkers, ndim))
 	#p0 = [testParams] * nwalkers
 
 	bar = progressbar.ProgressBar(max_value=burnRuns*nwalkers+100)
 
-	sampler = emcee.EnsembleSampler(nwalkers, ndim, postProb, args=[eng, m1, bar], a=2e-15)
+	sampler = emcee.EnsembleSampler(nwalkers, ndim, postProb, args=[eng, m1, bar], a=2e-3)
+	loadPriorProteinAffData()
+	print "Setup Complete"
 
 	pos, prob, state = sampler.run_mcmc(p0, burnRuns)
 	print "\nCompleted Burn Run"
@@ -62,10 +66,10 @@ def postProb(x, eng, m1, bar):
 	numTrials += 1
 	bar.update(numTrials)
 
-	if prior(x):
-		return likelihood(x, eng, m1)
-	else:
+	lp = prior(x)
+	if not np.isfinite(lp):
 		return -np.inf
+	return lp + likelihood(x, eng, m1)
 
 def likelihood(x, eng, m1):
 	passed = True;
@@ -91,11 +95,16 @@ def likelihood(x, eng, m1):
 		return -np.inf
 
 def prior(x):
-	flag = True
-	for i in x:
-		if not 0 <= i <= 2:
-			flag = False
-	return flag
+	retVal = 1
+	if not 0 < x[4] < 2:
+		retVal = -np.inf
+	else:
+		for param in range(len(x) - 1):
+			if priorProteinAffData[0, 0] < x[param] < priorProteinAffData[-1, 0]:
+				retVal *= priorProteinAffSearch(x[param])
+			else:
+				retVal = -np.inf
+	return retVal
 	
 def errorGaussian(err):
 	mean = 0
@@ -108,6 +117,41 @@ def checkCurve(time):
 	if retval > 1:
 		retval = 1
 	return retval
+
+priorProteinAffData = []
+def loadPriorProteinAffData():
+	import csv
+	with open("prior.csv") as f:
+	    reader = csv.reader(f)
+	    next(reader) # skip header
+	    data = [r for r in reader]
+
+	data = np.array(data)
+	global priorProteinAffData
+	priorProteinAffData = data.astype(np.float)
+	return priorProteinAffData
+
+def priorProteinAffSearch(num):
+	minInd = 0
+	maxInd = len(priorProteinAffData) - 1
+	return priorProteinAffSearchHelper(minInd, maxInd, num, priorProteinAffData)
+
+def priorProteinAffSearchHelper(minInd, maxInd, num, array):
+	retVal_test = 1
+	diff = maxInd - minInd
+	if diff <= 0:
+		if abs(array[maxInd, 0] - num) < abs(array[minInd, 0] - num):
+			return array[maxInd, retVal_test]
+		else:
+			return array[minInd, retVal_test]
+
+	midInd = int(diff/2) + minInd
+	if array[midInd, 0] > num:
+		return priorProteinAffSearchHelper(minInd, midInd-1, num, array)
+	elif array[midInd, 0] < num:
+		return priorProteinAffSearchHelper(midInd+1, maxInd, num, array)
+	else:
+		return array[midInd, retVal_test]
 
 if __name__ == "__main__":
 	main()

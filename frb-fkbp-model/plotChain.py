@@ -8,6 +8,8 @@ import corner
 defaults = ['chain.pkl', 0, 0, 0]
 args = defaults
 
+version = 0;
+
 for i in range(len(sys.argv) - 1):
 	args[i] = sys.argv[i+1]
 print args
