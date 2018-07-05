@@ -52,7 +52,7 @@ if args['allWalkerGraph']:
 		plt.plot([0, nruns], [average, average], 'b')
 		plt.xlabel('runs')
 		plt.ylabel('value')
-		plt.title(testParamNames[i] + ' = ' + str(testParams[i]) + ' avg = %.2E' % average)
+		plt.title(testParamNames[i] + ' = ' + str(testParams[i]) + ' | avg = %.2E' % average)
 	plt.show()
 
 if args['firstWalkerHist']:

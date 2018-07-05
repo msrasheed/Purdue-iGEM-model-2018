@@ -30,9 +30,18 @@ Trial 4
 	-UMMMMM, idk. Prob do some research on proper prior distributions
 
 Trial 5
-	- took natural lograthm of parameters. Am only looking for dissociation constants now
+	- took natural lograthm of parameters. Am only looking for two dissociation constants now
 	- implemented prior from previous study
 	Results
 	- results still all over the place, but moving in order of magnitude i want
 	Solutions
 	- my standard deviation for the error is way too high, is giving the go ahead for many parameters 
+
+Trial 6
+	- turns out SSE wasn't calculating correctly so fixed it
+	- fixed some other bugs
+	Results
+	- actually got a good looking prior distribution, but not at correct values
+	Solutions
+	- decrease standard deviation for errorGaussian?
+

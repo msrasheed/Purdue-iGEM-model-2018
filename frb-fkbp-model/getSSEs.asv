@@ -1,0 +1,12 @@
+sbioloadproject('frp-fkbp-hrp-model');
+amts = [.166 .25 .5 .75 1];
+blues = [];
+times = [];
+
+for x = 1:size(amts, 2)
+    m1.species(3).initialAmount = amts(x);
+    sim = sbiosimulate(m1);
+    blue = sim.Data(:,9);
+    inds = find(blue >= 1)
+    blue = blue(2:
+end

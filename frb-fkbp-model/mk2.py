@@ -25,7 +25,7 @@ def main():
 	eng.sbioaccelerate(m1["m1"], nargout=0)
 	print "Accelerated Model"
 
-	ndim = 2
+	ndim = 4
 	nwalkers = 50
 	burnRuns = 100
 	runs = 1000
@@ -72,16 +72,16 @@ def postProb(x, eng, m1, bar):
 	lp = prior(x)
 	if not np.isfinite(lp):
 		return -np.inf
-	return lp + likelihood(x, eng, m1)
+	return lp + likelihood(x, eng, m1, numTrials % 5)
 
-def likelihood(x, eng, m1):
+def likelihood(x, eng, m1, data):
 	passed = True;
 	# blue = [[1]]
 	# time = [[1]]
 	SSE = 0
 	x = np.exp(x)
 	try:
-		SSE = eng.frbFkbpSimulatorMK2(matlab.double(x.tolist()), m1["m1"])
+		SSE = eng.frbFkbpSimulatorMK2(matlab.double(x.tolist()), m1["m1"], 0)
 	except Exception as msg:
 		passed = False
 		print "Simulation Failed"
@@ -95,8 +95,8 @@ def likelihood(x, eng, m1):
 	# 	SSE += (blueCheck[i] - blue[i])**2
 
 	# print type(SSE)
-	print SSE
-	print errorGaussian(SSE)
+	# print SSE
+	# print errorGaussian(SSE)
 
 	if passed:
 		errorProb = errorGaussian(SSE)
@@ -123,8 +123,8 @@ def checkCurve(time):
 	return retval
 
 def errorGaussian(err):
-	mean = 0
-	std = 1e-5
+	mean = 9.165e-5
+	std = 4e-5
 	retval = (1/(2*math.pi*std**2))*math.exp(-1*((err-mean)**2)/(2*std**2))
 	return retval
 
