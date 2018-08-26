@@ -45,3 +45,23 @@ Trial 6
 	Solutions
 	- decrease standard deviation for errorGaussian?
 
+Trial 7
+	- tested with 4 parameters again
+	Results
+	- got good looking posterior distributions, but not at correct values
+	Solutions
+	- will try to limit standard deviation
+
+Trial 8 
+	- tested with 4 parameters
+	- tested against different data sets that started with varying amounts of rapamycin
+	Results
+	- the posterior distribution, i've noticed, is almost the same as the prior if not exactly the same
+	- realized errorGaussian was to blame, was either approving everything or nothing
+	- can't really fix cause results from different parameters have too close of an SSE to actual
+	- will probably have to give up on this option
+
+Trial 9
+	-realized prior was wrong; x axis was log of K_d values, not the power at which they were at
+	Results
+	-strong correlation to where prior is at buy walkers tend to wander very far and very negative if allowed to

@@ -25,11 +25,11 @@ def main():
 	eng.sbioaccelerate(m1["m1"], nargout=0)
 	print "Accelerated Model"
 
-	ndim = 4
+	ndim = 1
 	nwalkers = 50
 	burnRuns = 100
 	runs = 1000
-	p0 = np.random.rand(ndim * nwalkers).reshape((nwalkers, ndim)) * -23 - 9
+	p0 = np.random.rand(ndim * nwalkers).reshape((nwalkers, ndim)) * -9 - 4
 	#p0 = [testParams] * nwalkers
 
 	bar = progressbar.ProgressBar(max_value=burnRuns*nwalkers+100)
@@ -81,7 +81,7 @@ def likelihood(x, eng, m1, data):
 	SSE = 0
 	x = np.exp(x)
 	try:
-		SSE = eng.frbFkbpSimulatorMK2(matlab.double(x.tolist()), m1["m1"], 0)
+		SSE = eng.frbFkbpSimulatorMK2(matlab.double(x.tolist()), m1["m1"], data)
 	except Exception as msg:
 		passed = False
 		print "Simulation Failed"
@@ -123,22 +123,24 @@ def checkCurve(time):
 	return retval
 
 def errorGaussian(err):
-	mean = 9.165e-5
-	std = 4e-5
+	mean = 1.5763e-04
+	std = 7.6535e-05
 	retval = (1/(2*math.pi*std**2))*math.exp(-1*((err-mean)**2)/(2*std**2))
 	return retval
 
 priorProteinAffData = []
 def loadPriorProteinAffData():
 	import csv
-	with open("prior.csv") as f:
+	with open("prior2.csv") as f:
 	    reader = csv.reader(f)
-	    next(reader) # skip header
+	    # next(reader) # skip header
 	    data = [r for r in reader]
 
 	data = np.array(data).astype(np.float)
 	global priorProteinAffData
-	priorProteinAffData = np.array([np.log(data[:,0]), data[:,1]]).transpose()
+	# priorProteinAffData = np.array([np.log(data[:,0]), data[:,1]]).transpose()
+	priorProteinAffData = data
+	# print len(priorProteinAffData)
 
 def priorProteinAffSearch(num):
 	minInd = 0

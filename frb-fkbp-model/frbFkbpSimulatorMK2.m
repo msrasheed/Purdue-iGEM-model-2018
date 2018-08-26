@@ -11,7 +11,7 @@ for react = 1:numReacts
         if strcmp(param.Name, 'kf')
             param.Value = 1;
         else
-            param.Value = paramArray(index);
+            param.Value = paramArray; %(index);
             index = index + 1;
         end
     end
