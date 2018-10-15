@@ -1,4 +1,4 @@
-    function reconstVSrap() 
+function reconstVSrap() 
 sbioloadproject('frb-fkbp-titration.sbproj');
 rapVals = [[0:.01:1] [1:.1:5]];
 reconstVals = size(rapVals, 2);
