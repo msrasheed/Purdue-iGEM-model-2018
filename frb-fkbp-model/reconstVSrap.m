@@ -8,7 +8,7 @@ for i = 1:size(rapVals, 2)
     reconstVals(i) = sim.Data(end,7);
 end
 plot(rapVals, reconstVals, '-');
-xlabel("Rapamycin");
-ylabel("FKBP-FRB Complex");
+xlabel("biomarker");
+ylabel("[HRP_{reconst}]");
 title("Protein Complex vs [Rapamycin]");
 end

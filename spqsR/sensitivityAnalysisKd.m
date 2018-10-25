@@ -1,128 +1,162 @@
-function sensitivityAnalysis(kds, protConc)
+function sensitivityAnalysisKd()
 
 y0 = [44e-6 44e-6 44e-6 0 0 0 3.5662e-4 0];
 names = ["pqsR1", "pqsR2", "far", "pqFar", "pq2Far", "pqFarpq", "TMB", "blue"];
 opts = odeset('RelTol', 1e-6, 'AbsTol', 1e-13);
-vary = [-7:.2:-.2 .2:.2:7];
+vary = [-7:7];
 %vary = 0:.2:5;
 
 
 tcheck = 60;
 tspan = [0 tcheck];
 far = 44e-6;
-k_cat = 435;
-k_m = 9.0e-5;
+
+kd1A =  2.6e-5;
+kd2A = 2.0e-10;
+kd3A = 1.0e-13;
+kd4A = 1.2e-8;
+kdAv = 6.5e-6;
 %[t,y] = ode15s(@rxnODE, tspan, y0, opts);
 
-global kd;
-kd = kds;
-global k_catG;
-k_catG = k_cat;
-global k_mG;
-k_mG = k_m;
+global kd1;
+kd1 =  kd1A;
+global kd2;
+kd2 = kd2A;
+global kd3;
+kd3 = kd3A;
+global kd4;
+kd4 = kd4A;
 
 % [t,y] = ode15s(@rxnODESenAnyl, tspan, y0, opts);
 % compKd = y(size(y,1),8);
-compTime = solveReactionTime(tspan, y0, opts);
+compTime = solveReactionTimeKd(tspan, y0, opts);
 
-SKd = ones(1,size(vary,2));
+SKd1 = ones(1,size(vary,2));
 for i = 1:size(vary,2)
-    kd = kds*10^vary(i);
+    kd1 = kd1A*10^vary(i);
     %[t,y] = ode15s(@rxnODESenAnyl, tspan, y0, opts);
     %SKd(i) = (y(size(y,1),8)/compKd)/(kd/kds);
     
-    time = solveReactionTime(tspan, y0, opts);
+    time = solveReactionTimeKd(tspan, y0, opts);
     %SKd(i) = ((time-compTime)/compTime)/((kd-kds)/kds);
     %SKd(i) = (time - compTime)/compTime;
-    SKd(i) = log10(time);
+    SKd1(i) = log10(time);
     
 %     SKd(i) = (time/compTime)/(kd/kds);
 %     if time < compTime
 %         SKd(i) = SKd(i) * -1;
 %     end
 end
-kd = kds;
+kd1 = kd1A;
 
-SProtConc = ones(1,size(vary,2));
+SKd2 = ones(1,size(vary,2));
 for i = 1:size(vary,2)
-    y0(1) = protConc * 10^vary(i);
-    y0(2) = protConc * 10^vary(i);
+    kd2 = kd2A * 10^vary(i);
     %[t,y] = ode15s(@rxnODESenAnyl, tspan, y0, opts);
     %SProtConc(i) = (y(size(y,1),8)/compKd)/(y0(1)/protConc);
     
-    time = solveReactionTime(tspan, y0, opts);
+    time = solveReactionTimeKd(tspan, y0, opts);
     %SProtConc(i) = ((time-compTime)/compTime)/((y0(1)-protConc)/protConc);
     %SProtConc(i) = (time - compTime)/compTime;
-    SProtConc(i) = log10(time);
+    SKd2(i) = log10(time);
     
 %     SProtConc(i) = (time/compTime)/(y0(1)/protConc);
 %     if time < compTime
 %         SProtConc(i) = SProtConc(i) * -1;
 %     end
 end
-y(1) = protConc;
-y(2) = protConc;
+kd2 = kd2A;
 
-Skcat = ones(1,size(vary,2));
+SKd3 = ones(1,size(vary,2));
 for i = 1:size(vary,2)
-    k_catG = k_cat * 10^vary(i);
+    kd3 = kd3A * 10^vary(i);
     %[t,y] = ode15s(@rxnODESenAnyl, tspan, y0, opts);
     %Skcat(i) = (y(size(y,1),8)/compKd)/(k_catG/k_cat);
     
-    time = solveReactionTime(tspan, y0, opts);
+    time = solveReactionTimeKd(tspan, y0, opts);
     %Skcat(i) = ((time-compTime)/compTime)/((k_catG-k_cat)/k_cat);
     %Skcat(i) = (time-compTime)/compTime;
-    Skcat(i) = log10(time);
+    SKd3(i) = log10(time);
     
 %     Skcat(i) = (time/compTime)/(k_catG/k_cat);
 %     if time < compTime
 %         Skcat(i) = Skcat(i) * -1;
 %     end
 end
-k_catG = k_cat;
+kd3 = kd3A;
 
-Skm = ones(1,size(vary,2));
+SKd4 = ones(1,size(vary,2));
 for i = 1:size(vary,2)
-    k_mG = k_m * 10^vary(i);
+    kd4 = kd4A * 10^vary(i);
     %[t,y] = ode15s(@rxnODESenAnyl, tspan, y0, opts);
     %Skm(i) = (y(size(y,1),8)/compKd)/(k_mG/k_m);
     
-    time = solveReactionTime(tspan, y0, opts);
+    time = solveReactionTimeKd(tspan, y0, opts);
     %Skm(i) = ((time-compTime)/compTime)/((k_mG-k_m)/k_m);
     %Skm(i) = (time-compTime)/compTime;
-    Skm(i) = log10(time);
+    SKd4(i) = log10(time);
     
 %     Skm(i) = (time/compTime)/(k_mG/k_m);
 %     if time < compTime
 %         Skm(i) = Skm(i) * -1;
 %     end
 end
-k_mG = k_m;
+kd4 = kd4A;
+
+SKdA = ones(1,size(vary,2));
+for i = 1:size(vary,2)
+    kd1 = kdAv * 10^vary(i);
+    kd2 = kd1;
+    kd3 = kd1;
+    kd4 = kd1;
+    %[t,y] = ode15s(@rxnODESenAnyl, tspan, y0, opts);
+    %Skm(i) = (y(size(y,1),8)/compKd)/(k_mG/k_m);
+    
+    time = solveReactionTimeKd(tspan, y0, opts);
+    %Skm(i) = ((time-compTime)/compTime)/((k_mG-k_m)/k_m);
+    %Skm(i) = (time-compTime)/compTime;
+    SKdA(i) = log10(time);
+    
+%     Skm(i) = (time/compTime)/(k_mG/k_m);
+%     if time < compTime
+%         Skm(i) = Skm(i) * -1;
+%     end
+end
+kd1 = kd1A;
+kd2 = kd2A;
+kd3 = kd3A;
+kd4 = kd4A;
 
 subplot(2,2,1);
-plot(vary, SKd);
-title('kd');
+plot(vary, SKd1);
+title('kd1');
 ylabel('log(time)');
 xlabel('initial k_d * 10^x');
 
 subplot(2,2,2);
-plot(vary, SProtConc);
-title('ProtConc');
+plot(vary, SKd2);
+title('kd2');
 ylabel('log(time)');
-xlabel('initial [Prot] * 10^x');
+xlabel('initial k_d * 10^x');
 
 subplot(2,2,3);
-plot(vary, Skcat);
-title('kcat');
+plot(vary, SKd3);
+title('kd3');
 ylabel('log(time)');
-xlabel('initial k_{cat} * 10^x');
+xlabel('initial k_d * 10^x');
 
 subplot(2,2,4);
-plot(vary, Skm);
-title('km');
+plot(vary, SKd4);
+title('kd4');
 ylabel('log(time)');
-xlabel('initial k_m * 10^x');
+xlabel('initial k_d * 10^x');
 
 suptitle("Sensitivity Analysis");
+
+figure;
+plot(vary, SKdA);
+title('kd_{avg}');
+ylabel('log(time)');
+xlabel('initial k_d * 10^x');
 
 end
